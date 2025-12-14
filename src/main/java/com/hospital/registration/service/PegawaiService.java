@@ -4,7 +4,7 @@ import com.hospital.registration.dto.*;
 import com.hospital.registration.exception.ApiBusinessException;
 import com.hospital.registration.model.*;
 import com.hospital.registration.repository.*;
-import com.hospital.registration.utility.UserMapper;
+import com.hospital.registration.UserMapper;
 import com.hospital.registration.utils.EpochUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;

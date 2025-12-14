@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.hospital.registration.exception.BusinessErrorCodes.*;
-import static com.hospital.registration.utility.UserMapper.toUserInfo;
+import static com.hospital.registration.UserMapper.toUserInfo;
 
 @Service
 public class AuthService {
