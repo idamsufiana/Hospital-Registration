@@ -4,6 +4,7 @@ import com.hospital.registration.dto.ComboStatusAbsenResponse;
 import com.hospital.registration.dto.PresensiAdminResponse;
 import com.hospital.registration.dto.PresensiPegawaiResponse;
 import com.hospital.registration.model.Presensi;
+import com.hospital.registration.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -76,5 +77,5 @@ public interface PresensiRepository extends JpaRepository<Presensi, Long> {
             @Param("tgl") LocalDate tgl
     );
 
-    boolean existsByUserAndTglAbsensi(UUID userId, LocalDate tglAbsensi);
+    boolean existsByUserAndTglAbsensi(User user, LocalDate tglAbsensi);
 }

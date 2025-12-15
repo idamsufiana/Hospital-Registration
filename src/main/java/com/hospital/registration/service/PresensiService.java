@@ -6,6 +6,7 @@ import com.hospital.registration.dto.*;
 import com.hospital.registration.exception.ApiBusinessException;
 import com.hospital.registration.model.Presensi;
 import com.hospital.registration.model.StatusAbsen;
+import com.hospital.registration.model.User;
 import com.hospital.registration.repository.PresensiRepository;
 import com.hospital.registration.repository.StatusAbsenRepository;
 import com.hospital.registration.repository.UserRepository;
@@ -47,7 +48,7 @@ public class PresensiService {
             Integer tglAwal,
             Integer tglAkhir
     ) {
-        return presensiRepo.findStatusAbsen(EpochUtil.toLocalDate(Long.valueOf(tglAwal)), EpochUtil.toLocalDate(Long.valueOf(tglAkhir)));
+        return presensiRepo.findStatusAbsen(EpochUtil.parseTanggal(tglAwal), EpochUtil.parseTanggal(tglAkhir));
     }
 
     /**
@@ -57,7 +58,7 @@ public class PresensiService {
             Integer tglAwal,
             Integer tglAkhir
     ) {
-        return presensiRepo.findPresensiAdmin(EpochUtil.toLocalDate(Long.valueOf(tglAwal)), EpochUtil.toLocalDate(Long.valueOf(tglAkhir)));
+        return presensiRepo.findPresensiAdmin(EpochUtil.parseTanggal(tglAwal), EpochUtil.parseTanggal(tglAkhir));
     }
 
     public List<PresensiPegawaiResponse> daftarPresensiPegawai(
@@ -65,7 +66,7 @@ public class PresensiService {
             Integer tglAkhir
     ) {
         UUID userId = UUID.fromString(getCurrentUserId());
-        return presensiRepo.findPresensiPegawai(userId, EpochUtil.toLocalDate(Long.valueOf(tglAwal)), EpochUtil.toLocalDate(Long.valueOf(tglAkhir)));
+        return presensiRepo.findPresensiPegawai(userId, EpochUtil.parseTanggal(tglAwal), EpochUtil.parseTanggal(tglAkhir));
     }
 
     /* ==============================
@@ -73,10 +74,9 @@ public class PresensiService {
      * ============================== */
     public CheckInResponse checkIn() {
         UUID userId = UUID.fromString(getCurrentUserId());
-        Integer today = getTodayEpoch();
         String now = LocalTime.now().toString();
 
-        presensiRepo.findByUserIdAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
+        presensiRepo.findByUserIdAndTglAbsensi(userId, LocalDate.now())
                 .ifPresent(p -> {
                     if (p.getJamMasuk() != null) {
                         throw new ApiBusinessException(
@@ -87,11 +87,11 @@ public class PresensiService {
                 });
 
         Presensi presensi = presensiRepo
-                .findByUserIdAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
+                .findByUserIdAndTglAbsensi(userId, LocalDate.now())
                 .orElse(new Presensi());
 
         presensi.setUser(userRepo.getReferenceById(userId));
-        presensi.setTglAbsensi(EpochUtil.toLocalDate(Long.valueOf(today)));
+        presensi.setTglAbsensi(LocalDate.now());
         presensi.setJamMasuk(LocalTime.parse(now));
         presensi.setStatus(statusRepo.findHadir());
 
@@ -134,8 +134,9 @@ public class PresensiService {
      * ============================== */
     public AbseniResponse abseni(AbseniRequest req) {
         UUID userId = UUID.fromString(getCurrentUserId());
+        User user = userRepo.findById(userId).orElseThrow();
 
-        if (presensiRepo.existsByUserAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(req.getTglAbsensi())))) {
+        if (presensiRepo.existsByUserAndTglAbsensi(user, EpochUtil.parseTanggal(req.getTglAbsensi()))) {
             throw new ApiBusinessException(
                     "ABSENI_DUPLICATE",
                     "Presensi sudah tercatat"
@@ -152,7 +153,7 @@ public class PresensiService {
 
         Presensi presensi = new Presensi();
         presensi.setUser(userRepo.getReferenceById(userId));
-        presensi.setTglAbsensi(EpochUtil.toLocalDate(Long.valueOf(req.getTglAbsensi())));
+        presensi.setTglAbsensi(EpochUtil.parseTanggal(req.getTglAbsensi()));
         presensi.setStatus(status);
 
         presensiRepo.save(presensi);
