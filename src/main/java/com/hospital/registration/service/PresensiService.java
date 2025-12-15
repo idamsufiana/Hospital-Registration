@@ -178,7 +178,7 @@ public class PresensiService {
             return userId;
         }
 
-        throw new IllegalStateException("Principal is not JWT");
+        throw new IllegalStateException("Principal is not userId");
     }
 
     private Integer getTodayEpoch() {
