@@ -1,6 +1,7 @@
 package com.hospital.registration.service;
 
 import com.hospital.registration.config.CustomUserPrincipal;
+import com.hospital.registration.config.JwtService;
 import com.hospital.registration.dto.*;
 import com.hospital.registration.exception.ApiBusinessException;
 import com.hospital.registration.model.Presensi;
@@ -9,6 +10,8 @@ import com.hospital.registration.repository.PresensiRepository;
 import com.hospital.registration.repository.StatusAbsenRepository;
 import com.hospital.registration.repository.UserRepository;
 import com.hospital.registration.utils.EpochUtil;
+import io.jsonwebtoken.Jwt;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +27,17 @@ public class PresensiService {
     private final PresensiRepository presensiRepo;
     private final StatusAbsenRepository statusRepo;
     private final UserRepository userRepo;
+    private final JwtService jwtService;
 
     public PresensiService(
             PresensiRepository presensiRepo,
             StatusAbsenRepository statusRepo,
-            UserRepository userRepo
+            UserRepository userRepo, JwtService jwtService
     ) {
         this.presensiRepo = presensiRepo;
         this.statusRepo = statusRepo;
         this.userRepo = userRepo;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -42,7 +47,7 @@ public class PresensiService {
             Integer tglAwal,
             Integer tglAkhir
     ) {
-        return presensiRepo.findStatusAbsen(tglAwal, tglAkhir);
+        return presensiRepo.findStatusAbsen(EpochUtil.toLocalDate(Long.valueOf(tglAwal)), EpochUtil.toLocalDate(Long.valueOf(tglAkhir)));
     }
 
     /**
@@ -60,7 +65,7 @@ public class PresensiService {
             Integer tglAkhir
     ) {
         UUID userId = UUID.fromString(getCurrentUserId());
-        return presensiRepo.findPresensiPegawai(userId, tglAwal, tglAkhir);
+        return presensiRepo.findPresensiPegawai(userId, EpochUtil.toLocalDate(Long.valueOf(tglAwal)), EpochUtil.toLocalDate(Long.valueOf(tglAkhir)));
     }
 
     /* ==============================
@@ -162,12 +167,18 @@ public class PresensiService {
      * HELPER
      * ============================== */
     private String getCurrentUserId() {
-        CustomUserPrincipal principal =
-                (CustomUserPrincipal) SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getPrincipal();
-        return principal.getUserId();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new IllegalStateException("Unauthenticated");
+        }
+
+        Object principal = auth.getPrincipal();
+        if (principal instanceof String userId) {
+            return userId;
+        }
+
+        throw new IllegalStateException("Principal is not JWT");
     }
 
     private Integer getTodayEpoch() {

@@ -24,8 +24,8 @@ public interface PresensiRepository extends JpaRepository<Presensi, Long> {
         ORDER BY s.kdStatus
     """)
     List<ComboStatusAbsenResponse> findStatusAbsen(
-            @Param("tglAwal") Integer tglAwal,
-            @Param("tglAkhir") Integer tglAkhir
+            @Param("tglAwal") LocalDate tglAwal,
+            @Param("tglAkhir") LocalDate tglAkhir
     );
 
     @Query("""
@@ -63,8 +63,8 @@ public interface PresensiRepository extends JpaRepository<Presensi, Long> {
     """)
     List<PresensiPegawaiResponse> findPresensiPegawai(
             UUID userId,
-            Integer tglAwal,
-            Integer tglAkhir
+            LocalDate tglAwal,
+            LocalDate tglAkhir
     );
 
     Optional<Presensi> findByUserAndTglAbsensi(UUID userId, Integer tglAbsensi);
