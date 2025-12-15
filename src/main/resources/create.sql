@@ -89,8 +89,8 @@ CREATE TABLE IF NOT EXISTS presensi (
     user_id UUID NOT NULL,
     tgl_absensi DATE NOT NULL,
 
-    jam_masuk VARCHAR(5),
-    jam_keluar VARCHAR(5),
+    jam_masuk TIME NULL,
+    jam_keluar TIME NULL,
 
     kd_status INTEGER NOT NULL
 );
@@ -114,6 +114,13 @@ ALTER TABLE presensi
     ADD CONSTRAINT fk_presensi_status
     FOREIGN KEY (kd_status)
     REFERENCES status_absen(kd_status);
+
+ALTER TABLE presensi
+    DROP CONSTRAINT IF EXISTS uk_presensi_user_tgl;
+
+ALTER TABLE presensi
+    ADD CONSTRAINT uk_presensi_user_tgl
+    UNIQUE (user_id, tgl_absensi);
 
 
 -- =========================================

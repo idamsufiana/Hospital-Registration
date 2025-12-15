@@ -76,7 +76,7 @@ public class PresensiService {
         Integer today = getTodayEpoch();
         String now = LocalTime.now().toString();
 
-        presensiRepo.findByUserAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
+        presensiRepo.findByUserIdAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
                 .ifPresent(p -> {
                     if (p.getJamMasuk() != null) {
                         throw new ApiBusinessException(
@@ -87,12 +87,12 @@ public class PresensiService {
                 });
 
         Presensi presensi = presensiRepo
-                .findByUserAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
+                .findByUserIdAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
                 .orElse(new Presensi());
 
         presensi.setUser(userRepo.getReferenceById(userId));
         presensi.setTglAbsensi(EpochUtil.toLocalDate(Long.valueOf(today)));
-        presensi.setJamMasuk(now);
+        presensi.setJamMasuk(LocalTime.parse(now));
         presensi.setStatus(statusRepo.findHadir());
 
         presensiRepo.save(presensi);
@@ -108,7 +108,7 @@ public class PresensiService {
         Integer today = getTodayEpoch();
         String now = LocalTime.now().toString();
 
-        Presensi presensi = presensiRepo.findByUserAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
+        Presensi presensi = presensiRepo.findByUserIdAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
                 .orElseThrow(() ->
                         new ApiBusinessException(
                                 "CHECKOUT_INVALID",
@@ -123,7 +123,7 @@ public class PresensiService {
             );
         }
 
-        presensi.setJamKeluar(now);
+        presensi.setJamKeluar(LocalTime.parse(now));
         presensiRepo.save(presensi);
 
         return new CheckOutResponse(now);

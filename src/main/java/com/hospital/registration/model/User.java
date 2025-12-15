@@ -16,38 +16,51 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class User {
+
     @Id
-    @Column(length = 36)
-    private UUID idUser; // UUID string
+    @Column(name = "id_user")
+    private UUID idUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(nullable = false)
+    @Column(name = "profile", nullable = false)
     private String profile; // "ADMIN" / "PEGAWAI"
 
-    @Column(nullable = false)
+    @Column(name = "nama_lengkap", nullable = false)
     private String namaLengkap;
 
+    @Column(name = "tempat_lahir")
     private String tempatLahir;
 
-    // epoch millis (Integer di spec; lebih aman Long)
+    @Column(name = "tanggal_lahir")
     private LocalDate tanggalLahir;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
+    @Column(name = "nik_user")
     private String nikUser;
 
+    @Column(name = "kd_jabatan")
     private Integer kdJabatan;
+
+    @Column(name = "kd_departemen")
     private Integer kdDepartemen;
+
+    @Column(name = "kd_unit_kerja")
     private Integer kdUnitKerja;
+
+    @Column(name = "kd_jenis_kelamin")
     private Integer kdJenisKelamin;
+
+    @Column(name = "kd_pendidikan")
     private Integer kdPendidikan;
 
-    private String photo; // simpan URL / path
+    @Column(name = "photo")
+    private String photo; // URL / path foto
 }

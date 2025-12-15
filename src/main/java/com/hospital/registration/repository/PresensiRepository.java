@@ -30,7 +30,6 @@ public interface PresensiRepository extends JpaRepository<Presensi, Long> {
 
     @Query("""
     SELECT new com.hospital.registration.dto.PresensiAdminResponse(
-        u.id,
         u.namaLengkap,
         p.tglAbsensi,
         p.jamMasuk,
@@ -67,7 +66,15 @@ public interface PresensiRepository extends JpaRepository<Presensi, Long> {
             LocalDate tglAkhir
     );
 
-    Optional<Presensi> findByUserAndTglAbsensi(UUID userId, LocalDate tglAbsensi);
+    @Query("""
+    SELECT p FROM Presensi p
+    WHERE p.user.idUser = :userId
+      AND p.tglAbsensi = :tgl
+""")
+    Optional<Presensi> findByUserIdAndTglAbsensi(
+            @Param("userId") UUID userId,
+            @Param("tgl") LocalDate tgl
+    );
 
     boolean existsByUserAndTglAbsensi(UUID userId, LocalDate tglAbsensi);
 }
