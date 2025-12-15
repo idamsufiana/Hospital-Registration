@@ -105,10 +105,9 @@ public class PresensiService {
      * ============================== */
     public CheckOutResponse checkOut() {
         UUID userId = UUID.fromString(getCurrentUserId());
-        Integer today = getTodayEpoch();
         String now = LocalTime.now().toString();
 
-        Presensi presensi = presensiRepo.findByUserIdAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
+        Presensi presensi = presensiRepo.findByUserIdAndTglAbsensi(userId, LocalDate.now())
                 .orElseThrow(() ->
                         new ApiBusinessException(
                                 "CHECKOUT_INVALID",
@@ -182,9 +181,6 @@ public class PresensiService {
         throw new IllegalStateException("Principal is not userId");
     }
 
-    private Integer getTodayEpoch() {
-        return (int) LocalDate.now().toEpochDay();
-    }
 
 
 }
