@@ -76,7 +76,7 @@ public class PresensiService {
         Integer today = getTodayEpoch();
         String now = LocalTime.now().toString();
 
-        presensiRepo.findByUserAndTglAbsensi(userId, today)
+        presensiRepo.findByUserAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
                 .ifPresent(p -> {
                     if (p.getJamMasuk() != null) {
                         throw new ApiBusinessException(
@@ -87,7 +87,7 @@ public class PresensiService {
                 });
 
         Presensi presensi = presensiRepo
-                .findByUserAndTglAbsensi(userId, today)
+                .findByUserAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
                 .orElse(new Presensi());
 
         presensi.setUser(userRepo.getReferenceById(userId));
@@ -108,7 +108,7 @@ public class PresensiService {
         Integer today = getTodayEpoch();
         String now = LocalTime.now().toString();
 
-        Presensi presensi = presensiRepo.findByUserAndTglAbsensi(userId, today)
+        Presensi presensi = presensiRepo.findByUserAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(today)))
                 .orElseThrow(() ->
                         new ApiBusinessException(
                                 "CHECKOUT_INVALID",
@@ -135,7 +135,7 @@ public class PresensiService {
     public AbseniResponse abseni(AbseniRequest req) {
         UUID userId = UUID.fromString(getCurrentUserId());
 
-        if (presensiRepo.existsByUserAndTglAbsensi(userId, req.getTglAbsensi())) {
+        if (presensiRepo.existsByUserAndTglAbsensi(userId, EpochUtil.toLocalDate(Long.valueOf(req.getTglAbsensi())))) {
             throw new ApiBusinessException(
                     "ABSENI_DUPLICATE",
                     "Presensi sudah tercatat"

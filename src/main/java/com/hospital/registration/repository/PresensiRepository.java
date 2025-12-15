@@ -67,7 +67,7 @@ public interface PresensiRepository extends JpaRepository<Presensi, Long> {
             LocalDate tglAkhir
     );
 
-    Optional<Presensi> findByUserAndTglAbsensi(UUID userId, Integer tglAbsensi);
+    Optional<Presensi> findByUserAndTglAbsensi(UUID userId, LocalDate tglAbsensi);
 
-    boolean existsByUserAndTglAbsensi(UUID userId, Integer tglAbsensi);
+    boolean existsByUserAndTglAbsensi(UUID userId, LocalDate tglAbsensi);
 }
