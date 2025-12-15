@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UbahPasswordRequest {
-    private String passwordAsli;
-    private String passwordBaru1;
-    private String passwordBaru2;
+    private String passwordLama;
+    private String passwordBaru;
+    private String konfirmasiPassword;
 }

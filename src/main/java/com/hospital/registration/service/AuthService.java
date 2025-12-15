@@ -90,14 +90,14 @@ public class AuthService {
 
     @Transactional
     public String ubahPasswordSendiri(String userId, UbahPasswordRequest req) {
-        if (!Objects.equals(req.getPasswordBaru1(), req.getPasswordBaru2()))
+        if (!Objects.equals(req.getPasswordBaru(), req.getKonfirmasiPassword()))
             throw new ApiBusinessException(NEW_PASSWORD_MISMATCH,"Password baru tidak sama");
 
         User u = userRepo.findById(UUID.fromString(userId)).orElseThrow();
-        if (!passwordEncoder.matches(req.getPasswordAsli(), u.getPasswordHash()))
+        if (!passwordEncoder.matches(req.getPasswordLama(), u.getPasswordHash()))
             throw new ApiBusinessException(OLD_PASSWORD_INVALID,"Password asli salah");
 
-        u.setPasswordHash(passwordEncoder.encode(req.getPasswordBaru1()));
+        u.setPasswordHash(passwordEncoder.encode(req.getPasswordBaru()));
         userRepo.save(u);
         return "Ubah password Berhasil";
     }
