@@ -68,7 +68,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/init-data","/api/auth/login").permitAll()
 
                         // PROTECTED
-                        .requestMatchers("/api/auth/ubah-password-sendiri","/api/pegawai/**").authenticated()
+                        .requestMatchers("/api/auth/ubah-password-sendiri","/api/pegawai/**","/api/presensi/**").authenticated()
 
                         // lainnya wajib login
                         .anyRequest().authenticated()

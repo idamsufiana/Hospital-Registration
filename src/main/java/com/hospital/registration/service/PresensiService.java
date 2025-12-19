@@ -1,6 +1,5 @@
 package com.hospital.registration.service;
 
-import com.hospital.registration.config.CustomUserPrincipal;
 import com.hospital.registration.config.JwtService;
 import com.hospital.registration.dto.*;
 import com.hospital.registration.exception.ApiBusinessException;
